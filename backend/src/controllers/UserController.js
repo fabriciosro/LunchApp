@@ -3,25 +3,25 @@ const axios = require('axios');
 const User = require('../model/User');
 
 module.exports = {
-    async store(req, res){
-        console.log(req.body);
+    async index(req, res){
+        const _user = req.headers;    
 
-        //const { username } = req.body;
+        const user =  await User.findOne({ username: _user.user });
+
+        return res.json(user);
+    },
+
+    async store(req, res){
 
         const reqUser = req.body;
-
-        console.log(reqUser);
-
         const userExists = await User.findOne({ username: reqUser.username });
 
-        console.log(userExists);
-
         if(userExists){
+            //await User.updateOne({_id: userExists._id}, {$set: {voted: false}})
             console.log("usuario existente!");
             return res.json(userExists);            
         };
         //const response =  await axios.get(`https://api.github.com/users/${username}`);
-
         //const { name, bio, avatar_url: avatar } = response.data;
 
         const user = await User.create({ 
@@ -29,11 +29,11 @@ module.exports = {
             username: reqUser.username,            
             password: reqUser.password,
             email: reqUser.email,
-            admin: reqUser.admin
+            admin: reqUser.admin,
+            voted: reqUser.voted
         });
         //console.log(response.data);
         
-        //return res.json({ ok: true });
         return res.json(user);
     }
 };

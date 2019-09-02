@@ -1,12 +1,30 @@
-const restaurant = require('../model/Restaurant');
+const Poll = require('../model/Poll');
 
-const user = require('../model/User');
+const User = require('../model/User');
 
 module.exports = {
-    store(req, res) {
+    async store(req, res){
+        const reqPoll = req.body;
 
-        console.log(req.params.restaurantId);
+        const loggedUser = await User.findOne({ _id: reqPoll.idUser });
 
-        return res.json({ ok: true});
+        const pollExists =  await Poll.findOne({
+            $and: [
+                { nameUser: loggedUser.name  },
+                { idRestaurant: reqPoll.idRestaurant }
+            ]
+        });
+        
+        if(pollExists){
+            console.log("Voto ja existente!");
+            return res.json(pollExists);            
+        };
+
+        const poll = await Poll.create({ 
+            nameUser: loggedUser.name,
+            idRestaurant: reqPoll.idRestaurant
+        });
+
+        return res.json(poll);
     }
 };

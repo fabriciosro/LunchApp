@@ -7,6 +7,7 @@ const RestaurantSchema = new Schema({
     },
     site: String,
     alreadyChosen: Boolean,
+    chosenDay: Boolean,
     polls:[{
         type: Schema.Types.ObjectId,
         ref: 'User',
